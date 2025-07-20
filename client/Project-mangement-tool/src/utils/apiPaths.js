@@ -26,5 +26,10 @@ export const API_PATHS = {
     },
     REPORTS:{
         EXPORT_TASKS:"/api/report/export/tasks",
+        Exprot_USERS: "/api/report/export/users",
+    },
+    IMAGE: {
+        UPLOAD_IMAGE:"api/auth/upload-image",// add the image upload path
     }
+
 }

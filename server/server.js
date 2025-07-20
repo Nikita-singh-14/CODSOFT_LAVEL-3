@@ -21,12 +21,12 @@ app.use(
     })
 );
 
+
 //connect Database
 connectDB();
 
 //Middleware
 app.use(express.json());
-
 
 
 //Routes
@@ -38,6 +38,7 @@ app.use("/api/reports", reportRoutes);
 
 //Server uploads folder
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
+
 //Start Server
 const PORT = process.env.PORT || 8000;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));

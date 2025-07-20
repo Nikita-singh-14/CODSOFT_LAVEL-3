@@ -12,6 +12,7 @@ import {
     Cell,
 } from "recharts";
 const CustomBarChart = ({data}) => {
+    //function to alternate colors
     const getBarColor = (entry) => {
         switch (entry?.priority) {
             case 'Low' :
@@ -24,9 +25,6 @@ const CustomBarChart = ({data}) => {
              return '#00BC7D';
         }
     };
-
-
-
 
     const CustomTooltip = ({active, payload}) => {
         if(active && payload && payload.length){
@@ -59,6 +57,7 @@ const CustomBarChart = ({data}) => {
                     stroke="none" 
                     />
                     <YAxis tick={{fontSize:12, fill:"#555"}} stroke="none" />
+                    
                     <Tooltip content={CustomTooltip} cursor={{fill:"transparent"}} />
                     <Bar 
                     dataKey="count"

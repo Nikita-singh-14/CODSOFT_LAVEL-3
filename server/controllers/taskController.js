@@ -20,7 +20,7 @@ const getTasks = async(req, res) => {
                 "name email profileImageUrl"
             );
         }
-
+        // Add completed todochecklist count to each task
         tasks = await Promise.all(
             tasks.map(async(task) => {
                 const completedCount = task.todoChecklist.filter(
@@ -29,7 +29,7 @@ const getTasks = async(req, res) => {
                 return {...task._doc, completedTodoCount: completedCount};
             })
         );
-
+//Status summary counts
         const allTasks = await Task.countDocuments(
             req.user.role === "admin" ? {} : {assigneddTo: req.user._id}
         );
@@ -37,26 +37,26 @@ const getTasks = async(req, res) => {
         const pendingTasks = await Task.countDocuments({
             ...filter,
             status: "Pending",
-            ...Task(req.user.role !== "admin" && {assigneddTo: req.user._id}),
+            ...(req.user.role !== "admin" && {assigneddTo: req.user._id}),
         });
 
         const inProgressTasks = await Task.countDocuments({
             ...filter,
             status: "In Progress",
-            ...Task(req.user.role !== "admin" && {assigneddTo: req.user._id}),
+            ...(req.user.role !== "admin" && {assigneddTo: req.user._id}),
         });
 
         const completedTasks = await Task.countDocuments({
             ...filter,
             status: "Completed",
-            ...Task(req.user.role !== "admin" && {assigneddTo: req.user._id}),
+            ...(req.user.role !== "admin" && {assigneddTo: req.user._id}),
         });
 
         res.json({
             tasks,
             statusSummary:{
                 all:allTasks,
-                pendingtasks,
+                pendingTasks,
                 inProgressTasks,
                 completedTasks,
             },
@@ -151,14 +151,13 @@ const updateTask = async(req, res) => {
 
 
 
-
 const deleteTask = async(req, res) => {
     try{
-        const task = await TAsk.findById(req.params.id);
+        const task = await Task.findById(req.params.id);
 
-        if(!task)return res.status(404).json({message:"Tassk not found"});
+        if(!task) return res.status(404).json({message:"Task not found"});
      await task.deleteOne();
-         res.status(500).json({message:"server error", error:error.message});
+         res.json({message: "Task deleted successfully"});
     
 
     }catch (error) {
@@ -176,7 +175,7 @@ const updateTaskStatus = async(req, res) => {
             (userId) => userId.toString()=== req.user._id.toString()
         );
 
-        if(!isAssigned && req.user.roe !== "admin"){
+        if(!isAssigned && req.user.role !== "admin"){
             return res.status(403).json({message: "Not authorized"});
         }
 
@@ -201,20 +200,22 @@ const updateTaskChecklist = async(req, res) => {
         const {todoChecklist} = req.body;
         const task = await Task.findById(req.params.id);
         if(!task) return res.status(404).json({message:"Task not found"});
-        if(!task.assignedTo.includes(req.user._id) && req.userr.role !== "admin") {
+
+        if(!task.assignedTo.includes(req.user._id) && req.user.role !== "admin") {
             return res
             .status(403)
             .json({message: "Not authorized to update checkist"});
         }
 
-        task.todoChecklist = todoChecklist;
-
+        task.todoChecklist = todoChecklist; //Replace with updated checklist
+//Auto-update progress based on checklist completion
         const completedCount = task.todoChecklist.filter(
             (item) => item.completed
         ).length;
-        const todoItems = task.todoChecklist.length;
+        const totalItems = task.todoChecklist.length;
         task.progress = 
         totalItems>0 ? Math.round((completedCount / totalItems) * 100) : 0;
+        //Auto-mark task as completed if all items are checked
         if(task.progress === 100){
             task.status ="Competed";
         }else if(task.progress > 0){
@@ -239,6 +240,7 @@ const updateTaskChecklist = async(req, res) => {
 
 const getDashboardData = async(req, res) => {
     try{
+        //Fetch statistics
         const totalTasks = await Task.countDocuments();
         const pendingTasks = await Task.countDocuments({status: "Pending"});
         const completedTasks = await Task.countDocuments({status: "completed"});
@@ -246,9 +248,9 @@ const getDashboardData = async(req, res) => {
             status: {$ne:"completed"},
             dueDate:{$lt:new Date()},
     });
-
+//Ensure all possible statuses are included
     const taskStatuses = ["pending", "In Progress", "Completed"];
-    const taskDistributionRow = await task.aggregate([
+    const taskDistributionRow = await Task.aggregate([
         {
             $group:{
                 _id:"$status",
@@ -257,8 +259,8 @@ const getDashboardData = async(req, res) => {
         },
     ]);
     const taskDistribution = taskStatuses.reduce((acc, status) => {
-        const formattedKey = status.replace(/\s+/g, "");
-        scc[formattedKey] =
+        const formattedKey = status.replace(/\s+/g, "");//remove sapces for response keys
+        acc[formattedKey] =
         taskDistributionRow.find((item) => item._id === status) ?.count || 0;
         return acc;
     },{});
@@ -307,7 +309,8 @@ const getDashboardData = async(req, res) => {
 
 const getUserDashboardData = async(req, res) => {
     try{
-        const userId = req.user._id;
+        const userId = req.user._id; //Only fetch data for logged-in user
+        // Fetch statistics for user-specific tasks
         const totalTasks = await Task.countDocuments({assignedTo:userId});
         const pendingTasks = await Task.countDocuments({assignedTo:userId, status:"Pending"});
         const completedTasks = await Task.countDocuments({assignedTo:userId, status:"Completed"});

@@ -8,10 +8,10 @@ export const useUserAuth = () => {
 
     useEffect(() => {
         if(loading) return;
-        //if(user) return;
+        if(user) return;
 
         if(!user) {
-           // clearUser();
+            clearUser();
             navigate("/login");
         }
     }, [user, loading, clearUser, navigate]);

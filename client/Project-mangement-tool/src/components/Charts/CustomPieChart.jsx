@@ -10,6 +10,7 @@ import {
 
 import CustomTooltip from "./CustomTooltip";
 import CustomLegend from "./CustomLegend";
+
 const CustomPieChart = ({data, colors}) => {
     return (
         <ResponsiveContainer width="100%" height={325}>
@@ -21,7 +22,7 @@ const CustomPieChart = ({data, colors}) => {
                 cx="50%"
                 cy="50%"
                 outerRadius={130}
-                innerRadius={130}
+                innerRadius={100}
                 labelLine={false}
                 >
                     {data.map((entry, index) => (

@@ -4,6 +4,7 @@ import { API_PATHS } from "../../utils/apiPaths";
 import { LuUser, LuUsers } from "react-icons/lu";
 import Modal from "../Modal";
 import AvatarGroup from "../AvatarGroup";
+
 const SelectUsers = ({ SelectedUsers, setSelectedUsers }) => {
     const [allUsers, setAllUsers] = useState([]);
     const [isModalOpen, setIsModalOpen] = useState(false);
@@ -25,7 +26,7 @@ const SelectUsers = ({ SelectedUsers, setSelectedUsers }) => {
                 ? prev.filter((id) => id !== userId)
                 : [...prev, userId]
         );
-    }
+    };
         const handleAssign = () => {
             setSelectedUsers(tempSelectedUsers);
             setIsModalOpen(false);
@@ -40,12 +41,12 @@ const SelectUsers = ({ SelectedUsers, setSelectedUsers }) => {
         }, []);
 
         useEffect(() => {
-            if (allUsers.length === 0) {
+            if (SelectedUsers.length === 0) {
                 setTempSelectedUsers([]);
             }
 
             return () => { };
-        }, [SelectedUsers, allUsers]);
+        }, [SelectedUsers]);
     
     return (
         <div className="space-y-4 mt-2">
@@ -76,8 +77,12 @@ const SelectUsers = ({ SelectedUsers, setSelectedUsers }) => {
                             className="w-10 h-10 rounded-full"
                             />
                             <div className="flex-1">
-                                <p className="font-medium text-gray-800 dark:text-white">{user.name}</p>
-                                <p className="font-[13px] text-gray-500">{user.email}</p>
+                                <p className="font-medium text-gray-800 dark:text-white">
+                                    {user.name}
+                                </p>
+                                <p className="font-[13px] text-gray-500">
+                                    {user.email}
+                                </p>
                             </div>
                             <input 
                             type="checkbox"

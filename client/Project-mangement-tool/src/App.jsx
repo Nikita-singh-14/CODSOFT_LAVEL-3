@@ -6,11 +6,14 @@ import SignUp from './pages/Auth/SignUp';
 import ManageTasks from './pages/Admin/ManageTasks';
 import CreateTask from './pages/Admin/CreateTask';
 import ManageUsers from './pages/Admin/ManageUsers';
+
 import UserDashboard from './pages/User/UserDashboard';
 import MyTasks from './pages/User/MyTasks';
 import ViewTaskDetails from './pages/User/ViewTaskDetails';
+
 import PrivateRoute from './routes/PrivateRoute';
 import UserProvider, { UserContext } from './context/userContex';
+
 import { Toaster } from 'react-hot-toast';
 
 
@@ -25,18 +28,19 @@ const App = () => {
 
             {/* Admin Routes */}
             <Route element={<PrivateRoute allowedRoles={["admin"]} />} >
-              <Route element={<Dashboard />} path='/admin/dashboard' />
-              <Route element={<ManageTasks />} path='/admin/tasks' />
-              <Route element={<CreateTask />} path='/admin/create-task' />
-              <Route element={<ManageUsers />} path='/admin/users' />
+              <Route path='/admin/dashboard' element={<Dashboard />}  />
+              <Route path='/admin/tasks' element={<ManageTasks />}  />
+              <Route path='/admin/create-task' element={<CreateTask />} />
+              <Route path='/admin/users' element={<ManageUsers />} />
             </Route>
 
             {/* User Routes */}
             <Route element={<PrivateRoute allowedRoles={["user"]} />} >
-              <Route element={<UserDashboard />} path='/user/dashboard' />
-              <Route element={<MyTasks />} path='/user/tasks' />
-              <Route element={<ViewTaskDetails />} path='/user/task-details/:id' />
+              <Route path='/user/dashboard' element={<UserDashboard />}  />
+              <Route path='/user/tasks' element={<MyTasks />}  />
+              <Route path='/user/task-details/:id' element={<ViewTaskDetails />}  />
             </Route>
+
             {/*Default Route */}
             <Route path='/' element={<Root />} />
           </Routes>
@@ -53,6 +57,7 @@ const App = () => {
     </UserProvider>
   );
 };
+
 
 export default App;
 
