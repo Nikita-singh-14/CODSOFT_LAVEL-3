@@ -52,7 +52,31 @@ const CreateTask = () => {
         });
     };
 
-    const CreateTask = async () => { };
+    const CreateTask = async () => {
+        setLoading(true);
+
+        try {
+            const todolist = taskData.todoChecklist?.map((item) => ({
+                text:item,
+                completed:false,
+            }));
+
+            const response = await axiosInstance.post(API_PATHS.TASKS.CREATE_TASK, {
+                ...taskData,
+                dueDate: new Date(taskData.dueDate).toISOString(),
+                todoChecklist: todolist,
+            });
+
+            toast.success("Task Created Successfully");
+
+            clearData();
+        } catch (error) {
+            console.error("Error creating task:", error);
+            setLoading(false);
+        } finally {
+            setLoading(false);
+        }
+    };
     const updateTask = async () => { };
     const handleSubmit = async () => { 
         setError(null);
@@ -65,7 +89,7 @@ const CreateTask = () => {
             setError("Description is required.");
             return;
         }
-        if(!taskData.dueData.trim()){
+        if(!taskData.dueDate){
             setError("Due Date is required.");
             return;
         }
@@ -186,7 +210,8 @@ const CreateTask = () => {
                             <TodoListInput
                                 todoList={taskData?.todoChecklist}
                                 setTodoList={(value) =>
-                                    handleValueChange("todoCkecklist", value)
+                                    handleValueChange("todoChecklist", value)
+
                                 }
                             />
                         </div>

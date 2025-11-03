@@ -38,9 +38,10 @@ const TaskCard = ({
                 return "text-rose-500 bg-rose-50 border border-rose-500/10";
         }
     };
-    return <div className=""
+    return <div 
+        className="bg-white rounded-xl py-4 shadow-gray-100 border border-gray-200/50 cursor-pointer"
         onClick={onClick}>
-        <div className="bg-white rounded-xl py-4 shadow-md shadow-gray-100 border border-gray-200/50 cursor-pointer">
+        <div className="flex items-end gap-3 px-4">
             <div
                 className={`text-[11px] font-medium ${getStatusTagColor()} px-4 py-0.5 rounded`}>
                 {status} 
